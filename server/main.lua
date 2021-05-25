@@ -3,32 +3,31 @@ ESX = nil
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
 
-TriggerEvent('es:addGroupCommand', 'comserv', 'admin', function(source, args, user)
-	if args[1] and GetPlayerName(args[1]) ~= nil and tonumber(args[2]) then
-		TriggerEvent('esx_communityservice:sendToCommunityService', tonumber(args[1]), tonumber(args[2]))
-	else
-		TriggerClientEvent('chat:addMessage', source, { args = { _U('system_msn'), _U('invalid_player_id_or_actions') } } )
-	end
-end, function(source, args, user)
-	TriggerClientEvent('chat:addMessage', source, { args = { _U('system_msn'), _U('insufficient_permissions') } })
-end, {help = _U('give_player_community'), params = {{name = "id", help = _U('target_id')}, {name = "actions", help = _U('action_count_suggested')}}})
-_U('system_msn')
-
-
-TriggerEvent('es:addGroupCommand', 'endcomserv', 'admin', function(source, args, user)
-	if args[1] then
-		if GetPlayerName(args[1]) ~= nil then
-			TriggerEvent('esx_communityservice:endCommunityServiceCommand', tonumber(args[1]))
+RegisterCommand('comserv', function(source, args, user)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	if xPlayer.getGroup() == 'admin' then
+		if args[1] and GetPlayerName(args[1]) ~= nil and tonumber(args[2]) then
+			TriggerEvent('esx_communityservice:sendToCommunityService', tonumber(args[1]), tonumber(args[2]))
 		else
-			TriggerClientEvent('chat:addMessage', source, { args = { _U('system_msn'), _U('invalid_player_id')  } } )
+			TriggerClientEvent('chat:addMessage', source, { args = { _U('system_msn'), _U('invalid_player_id_or_actions') } } )
 		end
-	else
-		TriggerEvent('esx_communityservice:endCommunityServiceCommand', source)
 	end
-end, function(source, args, user)
-	TriggerClientEvent('chat:addMessage', source, { args = { _U('system_msn'), _U('insufficient_permissions') } })
-end, {help = _U('unjail_people'), params = {{name = "id", help = _U('target_id')}}})
+end, false)
 
+RegisterCommand('endcomserv', function(source, args, user)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	if xPlayer.getGroup() == 'admin' then
+		if args[1] then
+			if GetPlayerName(args[1]) ~= nil then
+				TriggerEvent('esx_communityservice:endCommunityServiceCommand', tonumber(args[1]))
+			else
+				TriggerClientEvent('chat:addMessage', source, { args = { _U('system_msn'), _U('invalid_player_id')  } } )
+			end
+		else
+			TriggerEvent('esx_communityservice:endCommunityServiceCommand', source)
+		end
+	end
+end, false)
 
 
 
